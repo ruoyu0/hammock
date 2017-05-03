@@ -14,7 +14,7 @@ def get_client(*args, **kwargs):
     client_file = open('build/hammock_client.py', 'w')
     try:
         fcntl.flock(client_file.fileno(), fcntl.LOCK_EX)
-        client_file.write(client.ClientGenerator("HammockClient", resources1).code + '\n')
+        client_file.write(client.ClientGenerator("HammockClient", resources1, lenient=True).code + '\n')
         client_file.flush()
         sys.path.append('build')
         client_class = importlib.import_module("hammock_client").HammockClient

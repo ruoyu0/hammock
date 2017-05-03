@@ -22,7 +22,7 @@ SWAGGER_TYPES = {
 }
 
 
-def _strip_escaped_newlines(doc):
+def strip_escaped_newlines(doc):
     if not doc:
         return ''
     return re.sub('(\\\\n)*$', '', re.sub('^(\\\\n)*', '', doc)).strip()
@@ -33,7 +33,7 @@ def _generate_param_dict(route, name, arg, where, required):
         'name': route.keyword_map.get(name, name),
         'in': where,
         'type': SWAGGER_TYPES.get(arg.type_name, "string"),
-        'description': _strip_escaped_newlines(arg.doc),
+        'description': strip_escaped_newlines(arg.doc),
         'required': required,
     }
 
@@ -85,7 +85,7 @@ def generate_swagger(package):
                     prop_name = route.keyword_map.get(name, name)
                     properties[prop_name] = {
                         'type': SWAGGER_TYPES.get(arg.type_name, "string"),
-                        'description': _strip_escaped_newlines(arg.doc),
+                        'description': strip_escaped_newlines(arg.doc),
                     }
                     if not isinstance(arg, (_args.KeywordArg, _args.OptionalArg)):
                         required.append(prop_name)
@@ -106,7 +106,7 @@ def generate_swagger(package):
                         definitions[param_name]['required'] = required
 
                 operation = {
-                    'description': _strip_escaped_newlines(route.spec.doc),
+                    'description': strip_escaped_newlines(route.spec.doc),
                     'parameters': parameters,
                     'responses': {
                         route.success_code: {

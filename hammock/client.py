@@ -13,6 +13,7 @@ import hammock.types.func_spec as func_spec
 import hammock.types.file as file_module
 import hammock.wrappers as wrappers
 import hammock.mock_import as mock_import
+import hammock.verify_doc as verify_doc
 
 
 ENV = jinja2.Environment(loader=jinja2.PackageLoader('hammock.templates', 'client'))
@@ -23,7 +24,14 @@ IGNORE_KW = {common.KW_HEADERS, common.KW_FILE, common.KW_LIST, common.KW_CREDEN
 
 
 class ClientGenerator(object):
-    def __init__(self, class_name, resources_package, default_url=''):
+    def __init__(self, class_name, resources_package, default_url='',
+                 lenient=False, method_verifier=False, argument_verifier=False):
+        if not lenient:
+            errors = verify_doc.verify_doc(resources_package, method_verifier, argument_verifier)
+            for err in errors:
+                sys.stderr.write(err + '\n')
+            if errors:
+                raise SyntaxError('%d errors found' % len(errors))
         self._resources = {}
 
         self._add_resources(resources_package)
@@ -194,8 +202,8 @@ def client_methods_properties(resource_object, paths):
     return methods
 
 
-def main(class_name, package_name, default_url=''):
-    print(ClientGenerator(class_name, package_name, default_url).code)
+def main(class_name, package_name, default_url='', lenient=False, method_verifier=False, argument_verifier=False):
+    print(ClientGenerator(class_name, package_name, default_url, lenient, method_verifier, argument_verifier).code)
 
 
 if __name__ == '__main__':

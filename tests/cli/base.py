@@ -33,7 +33,8 @@ def get_unified_client(build_path):
         with open('{}/client{}.py'.format(build_path, i), 'w') as file_object:
             file_object.write(client.ClientGenerator(
                 'Client',
-                importlib.import_module('tests.resources{}'.format(i))
+                importlib.import_module('tests.resources{}'.format(i)),
+                lenient=True,
             ).code + '\n')
         client_map['client{}'.format(i)] = getattr(importlib.import_module('client{}'.format(i)), 'Client')
 
