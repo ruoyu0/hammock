@@ -1,4 +1,4 @@
-FROM python:2
+FROM python:2.7.12
 
 COPY dev-requirements.txt /tmp/dev-requirements.txt
 RUN pip install --no-cache-dir -r /tmp/dev-requirements.txt
