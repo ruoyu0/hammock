@@ -86,7 +86,7 @@ class {{ class_name }}(object):
         self._set_token(token)
         self._client.headers.update(headers or {})
 {%- for resource_name, resource_class, resource_path in resources_names %}
-        {% if resource_name %}self.{{ resource_name }} = self.{{ resource_class }}(self._fetch, '{{ resource_path }}'){% endif %}
+        {% if resource_name %}self.{{ resource_name }} = self.{{ resource_class }}(self._fetch, '%s/{{ resource_path }}' % self._url){% endif %}
 {%- endfor %}
 
     def close(self):
