@@ -59,7 +59,7 @@ class {{ class_name }}(object):
 
     ROUTE_CLI_COMMAND_MAP = {}
 
-    def __init__(self, hostname=None, port=None, url={% if default_url %}'{{ default_url }}'{% else %}''{% endif %}, token=None, timeout=60, headers=None, retries=0, session=None):
+    def __init__(self, hostname=None, port=None, url={% if default_url %}'{{ default_url }}'{% else %}''{% endif %}, token=None, timeout=60, headers=None, retries=0, session=None, suppress_errors=False):
         """
         :param url: url to connect to
         :param token: a token to be used for requests
@@ -85,12 +85,19 @@ class {{ class_name }}(object):
         self._timeout = timeout
         self._set_token(token)
         self._client.headers.update(headers or {})
+        self._suppress_errors = suppress_errors
 {%- for resource_name, resource_class, resource_path in resources_names %}
         {% if resource_name %}self.{{ resource_name }} = self.{{ resource_class }}(self._fetch, '{{ resource_path }}'){% endif %}
 {%- endfor %}
 
     def close(self):
         self._client.close()
+
+    def _raise_or_log(self, method, url):
+        if self._suppress_errors:
+            self._logger.exception("Failed to fetch %s %s", method, url)
+        else:
+            raise
 
     def _fetch(self, method, url, json=None, file_stream=None, success_code=200, kwargs=None, url_kw=None, headers=None):
         eventually_close_file_object = None
@@ -157,7 +164,9 @@ class {{ class_name }}(object):
                         retry_count -= 1
                         self._logger.warning("hammock - Got BadStatusLine from server - considering http-keepalive race-condition and retrying")
                     else:
-                        raise
+                        self._raise_or_log(method, url)
+                except:
+                    self._raise_or_log(method, url)
             result = None
             if '{{ type_json }}' in response.headers.get('content-type', ''):
                 result = self._jsonify(response)
@@ -171,7 +180,10 @@ class {{ class_name }}(object):
                     "Response status %d does not match expected success status %d",
                     response.status_code, success_code
                 )
-            response.raise_for_status()
+            try:
+                response.raise_for_status()
+            except:
+                self._raise_or_log(method, url)
             return result
         finally:
             if eventually_close_file_object:
