@@ -11,7 +11,12 @@ class CommonResources(hammock.Resource):
 
     @hammock.get('_client', response_content_type='text/x-python')
     def get_client(self, _host):
-        return client.ClientGenerator('Client', self.params['_resource_package'], _host, lenient=True).code
+        verification_exceptions = (('ArgumentTypes', 'conversions_in_get', 'not_in_doc'),
+                                   ('ArgumentTypes', 'conversions_in_get_with_default', 'not_in_doc'),
+                                   ('Lists', 'get', 'argument'),
+                                   ('Dict', 'insert', 'value'),
+                                   ('Dict', 'update', 'value'))
+        return client.ClientGenerator('Client', self.params['_resource_package'], _host, verification_exceptions=verification_exceptions).code
 
     @hammock.get('_api')
     def get_api(self):

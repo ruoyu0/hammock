@@ -11,12 +11,12 @@ class ArgumentTypes(hammock.Resource):
     def conversions_in_get(self, a_list, an_int, a_float, a_bool, a_string, a_uuid, not_in_doc):  # pylint: disable=unused-argument
         """
         Check conversion of argument in URL methods.
-        :param str a_string: a string argument
-        :param uuid a_uuid: an uuid argument
-        :param bool a_bool: a bool argument
-        :param float a_float: a float argument
-        :param int an_int: an int argument
-        :param list a_list: a list argument
+        :param str a_string: A string argument
+        :param uuid a_uuid: An uuid argument
+        :param bool a_bool: A bool argument
+        :param float a_float: A float argument
+        :param int an_int: An int argument
+        :param list a_list: A list argument
         :return bool: True if all arguments have the correct type
         """
         if not isinstance(a_list, list):
@@ -42,12 +42,12 @@ class ArgumentTypes(hammock.Resource):
             self, a_list=None, an_int=1, a_float=0.1, a_bool=True, a_string='123', a_uuid='ceae3dd0-5a38-4189-b65c-bbb66a457812', not_in_doc=None):
         """
         Check conversion of argument in URL methods.
-        :param str a_string: a string argument
-        :param uuid a_uuid: an uuid argument
-        :param bool a_bool: a bool argument
-        :param float a_float: a float argument
-        :param int an_int: an int argument
-        :param list a_list: a list argument
+        :param str a_string: A string argument
+        :param uuid a_uuid: An uuid argument
+        :param bool[True] a_bool: A bool argument
+        :param float a_float: A float argument
+        :param int an_int: An int argument
+        :param list a_list: A list argument
         :return bool: True if all arguments have the correct type
         """
         if not isinstance(a_list, list):
@@ -72,7 +72,7 @@ class ArgumentTypes(hammock.Resource):
     def get_to_list(self, a_list):
         """
         Check conversion of argument in URL methods.
-        :param list a_list: a list argument
-        :return list: the list
+        :param list a_list: A list argument
+        :return list: The list
         """
         return a_list

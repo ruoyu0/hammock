@@ -16,34 +16,36 @@ class CLINames(hammock.Resource):
     @hammock.post('optional-variable-with-underscore')
     def optional_variable_with_underscores(self, optional_variable=None):  # pylint: disable=invalid-name
         """
-        Returns an optional variable
-        :param optional_variable: an optional variable
-        :return: the optional variable
+        Returns an optional variable.
+        :param str optional_variable: An optional variable
+        :return: The optional variable
         """
         return optional_variable
 
     @hammock.post('set-true')
     def set_true(self, set_true=False):
         """
+        Set True.
         :param bool[False] set_true: Set true
-        :return bool:
+        :return bool: Set True?
         """
         return set_true
 
     @hammock.post('set-false')
     def set_false(self, set_false=True):
         """
+        Set False.
         :param bool[True] set_false: Set false
-        :return bool:
+        :return bool: Set False?
         """
         return set_false
 
     @hammock.post('bool-type')
     def bool_type(self, value=None):
         """
-        Return a bool value
-        :param bool value: value
-        :return bool: the value
+        Return a bool value.
+        :param bool value: Value
+        :return bool: The value
         """
         if not isinstance(value, bool):
             raise exceptions.BadRequest('Value should be bool')
@@ -51,28 +53,38 @@ class CLINames(hammock.Resource):
 
     @hammock.get('ignored-method', cli_command_name=False)
     def ignored_method(self):
+        """
+        Ignored method.
+        :return str: Ignored-method
+        """
         return 'ignored-method'
 
     @hammock.get('returns-nothing-type')
     def returns_nothing_type(self):
         """
-        :return None:
+        Returns nothing type.
+        :return None: None
         """
         return 'something'
 
     @hammock.get('argument-with-underscores')
     def argument_with_underscores(self, _arg_, _second_arg_=None):
         """
-        :param int _arg_: argument with underscores
-        :param int _second_arg_: second argument with underscores
-        :return dict:
+        Argument with underscores.
+        :param int _arg_: Argument with underscores
+        :param int _second_arg_: Second argument with underscores
+        :return dict: Parameters
         """
         return {'arg': _arg_, 'second': _second_arg_}
 
 
 def _get_func(func_name):
-    @hammock.get(func_name)
+    @hammock.get(func_name.replace('_', '-'))
     def func(self):  # pylint: disable=unused-argument
+        """
+        Func.
+        :return str: Func name
+        """
         return func_name
     func.__name__ = func_name
     return func

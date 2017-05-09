@@ -14,7 +14,13 @@ def get_client(*args, **kwargs):
     client_file = open('build/hammock_client.py', 'w')
     try:
         fcntl.flock(client_file.fileno(), fcntl.LOCK_EX)
-        client_file.write(client.ClientGenerator("HammockClient", resources1, lenient=True).code + '\n')
+        verification_exceptions = (('ArgumentTypes', 'conversions_in_get', 'not_in_doc'),
+                                   ('ArgumentTypes', 'conversions_in_get_with_default', 'not_in_doc'),
+                                   ('Lists', 'get', 'argument'),
+                                   ('Dict', 'insert', 'value'),
+                                   ('Dict', 'update', 'value'))
+        client_file.write(client.ClientGenerator("HammockClient", resources1,
+                                                 verification_exceptions=verification_exceptions).code + '\n')
         client_file.flush()
         sys.path.append('build')
         client_class = importlib.import_module("hammock_client").HammockClient

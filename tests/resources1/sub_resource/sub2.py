@@ -8,4 +8,8 @@ class Sub2(hammock.Resource):
 
     @hammock.get()
     def get(self):
+        """
+        Get.
+        :return str: String
+        """
         return "sub2-in-sub1"

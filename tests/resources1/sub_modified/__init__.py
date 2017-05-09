@@ -1,1 +1,1 @@
-PATH = "different_path"
+PATH = "different-path"

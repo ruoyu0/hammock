@@ -7,4 +7,8 @@ class Sub(hammock.Resource):
 
     @hammock.get()
     def get(self):
+        """
+        Get.
+        :return str: A constant string
+        """
         return "sub-in-ignored"

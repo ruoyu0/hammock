@@ -11,10 +11,19 @@ class Patterns(hammock.Resource):
 
     @hammock.get()
     def get(self):
+        """
+        Get.
+        :return str: A constant string
+        """
         return "base"
 
     @hammock.get("{my_id}")
     def get_id(self, my_id):
+        """
+        Get ID.
+        :param str my_id: My ID
+        :return str: ID
+        """
         return "id-%s" % my_id
 
     @hammock.sink("{my_id}/extra")

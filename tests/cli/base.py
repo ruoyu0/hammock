@@ -29,12 +29,17 @@ def get_unified_client(build_path):
         os.makedirs(build_path)
     sys.path.append(build_path)
     client_map = {}
+    verification_exceptions = (('ArgumentTypes', 'conversions_in_get', 'not_in_doc'),
+                               ('ArgumentTypes', 'conversions_in_get_with_default', 'not_in_doc'),
+                               ('Lists', 'get', 'argument'),
+                               ('Dict', 'insert', 'value'),
+                               ('Dict', 'update', 'value'))
     for i in range(1, 3):
         with open('{}/client{}.py'.format(build_path, i), 'w') as file_object:
             file_object.write(client.ClientGenerator(
                 'Client',
                 importlib.import_module('tests.resources{}'.format(i)),
-                lenient=True,
+                verification_exceptions=verification_exceptions,
             ).code + '\n')
         client_map['client{}'.format(i)] = getattr(importlib.import_module('client{}'.format(i)), 'Client')
 

@@ -19,16 +19,16 @@ class List(hammock.Resource):
     @hammock.post(success_code=201)
     def append(self, value):
         """
-        Append a value
-        :param value: a value to a append to the list
+        Append A value.
+        :param str value: A value to a append to the list
         """
         self._list.append(value)
 
     @hammock.delete('{value}')
     def remove(self, value):
         """
-        Remove a value from the list
-        :param value: a value to remove
+        Remove a value from the list.
+        :param str value: A value to remove
         """
         try:
             self._list.remove(value)
@@ -38,7 +38,7 @@ class List(hammock.Resource):
     @hammock.get()
     def list(self):
         """
-        Show all the list
-        :return list: the content of the list
+        Show all the list.
+        :return list: The content of the list
         """
         return self._list

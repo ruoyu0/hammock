@@ -8,4 +8,8 @@ class CLIIgnoredResource(hammock.Resource):
 
     @hammock.get()
     def get(self):
+        """
+        Get.
+        :return str: CLI-ignored-resource
+        """
         return 'cli-ignored-resource'

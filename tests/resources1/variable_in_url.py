@@ -9,6 +9,11 @@ class VariableInUrl(hammock.Resource):
 
     @hammock.get()
     def get(self, variable_name):
+        """
+        Get.
+        :param str variable_name: Variable name
+        :return str: Variable name
+        """
         return variable_name
 
 
@@ -19,4 +24,9 @@ class VariableFirstInUrl(hammock.Resource):
 
     @hammock.get()
     def get(self, variable_name):
+        """
+        Get.
+        :param str variable_name: Variable name
+        :return str: Variable name
+        """
         return variable_name

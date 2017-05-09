@@ -18,6 +18,10 @@ class ClientMethods(hammock.Resource):
         client_methods={name: {'name': name} for name in ALLOWED_ACTIONS},
     )
     def action(self, name, **kwargs):
+        """
+        Action.
+        :param str name: Name
+        """
         if name not in ALLOWED_ACTIONS:
             raise hammock.exceptions.BadRequest('action {} not allowed'.format(name))
         self.check_spec_match(name, kwargs)
@@ -26,9 +30,9 @@ class ClientMethods(hammock.Resource):
     def run(self, speed, distance=1):
         """
         Run!
-        :param float speed: Running speed.
+        :param float speed: Running speed
         :param float distance: Running distance
-        :return float: Run duration.
+        :return float: Run duration
         """
         return speed * distance
 
@@ -36,6 +40,6 @@ class ClientMethods(hammock.Resource):
         """
         Jump!
         :param int times: Many times to jump
-        :return int: Times.
+        :return int: Times
         """
         return times

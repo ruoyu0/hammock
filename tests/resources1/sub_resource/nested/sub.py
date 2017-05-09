@@ -8,4 +8,8 @@ class Sub(hammock.Resource):
 
     @hammock.get()
     def get(self):
+        """
+        Get.
+        :return str: A descriptive string
+        """
         return "sub-in-nested-in-sub"

@@ -11,8 +11,16 @@ class Exceptions(hammock.Resource):
 
     @hammock.get('internal')
     def internal(self):
+        """
+        Internal.
+        :return str: Nothing
+        """
         raise Exception(DESCRIPTION)
 
-    @hammock.get('not_found')
+    @hammock.get('not-found')
     def not_found(self):
+        """
+        Not found.
+        :return str: Nothing
+        """
         raise exceptions.NotFound(DESCRIPTION)

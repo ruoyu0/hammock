@@ -10,20 +10,39 @@ class Keywords(hammock.Resource):
     @hammock.get()
     def get(self, arg, default=DEFAULT, **kwargs):
         """
-        :return dict: answer
+        Get.
+        :param str arg: Arg
+        :param str default: Default
+        :return dict: Answer
         """
         return self._answer(arg, default, **kwargs)
 
     @hammock.post()
     def post(self, arg, default=DEFAULT, **kwargs):
+        """
+        Post.
+        :param int arg: Arg
+        :param int default: Default
+        """
         return self._answer(arg, default, **kwargs)
 
     @hammock.put()
     def put(self, arg, default=DEFAULT, **kwargs):
+        """
+        Put.
+        :param int arg: Arg
+        :param int default: Default
+        """
         return self._answer(arg, default, **kwargs)
 
     @hammock.get("headers")
     def get_with_headers(self, arg, _headers, default=10, **kwargs):
+        """
+        Get with headers.
+        :param str arg: Arg
+        :param str default: Default
+        :return dict: Answer
+        """
         return self._answer(arg, default, headers=dict(_headers), **kwargs)
 
     def _answer(self, arg, default, **kwargs):

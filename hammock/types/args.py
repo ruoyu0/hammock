@@ -104,7 +104,7 @@ class KeywordArg(PositionalArg):
     """Represent a function keywords argument"""
 
     def __init__(self, name, doc=None):
-        doc = doc or 'Extra arguments, a dict as a json string.'
+        doc = doc or 'Extra arguments, a dict as a JSON string'
         super(KeywordArg, self).__init__(name, 'dict', doc)
 
     @property

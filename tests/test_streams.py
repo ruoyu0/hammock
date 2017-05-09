@@ -39,7 +39,7 @@ class TestStreams(base.TestBase):
         logging.info("Testing reading in server of %d mb", MB_TO_TEST)
         response = self._simulate(
             "POST",
-            os.path.join(path, "check_size"),
+            os.path.join(path, "check-size"),
             query_string="size_mb={:d}".format(MB_TO_TEST),
             body=body,
             headers={common.CONTENT_TYPE: common.TYPE_OCTET_STREAM},

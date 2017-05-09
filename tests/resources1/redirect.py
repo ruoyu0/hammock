@@ -44,6 +44,10 @@ class Redirect(hammock.Resource):
 
     @hammock.get("specific")
     def specific(self):
+        """
+        Specific.
+        :return str: A specific string
+        """
         return "specific"
 
     @hammock.post(
@@ -64,6 +68,10 @@ class Redirect(hammock.Resource):
         post_process=post_manipulate,
     )
     def post_passthrough_with_body(self, request):
+        """
+        Post passthrough with body.
+        :param str request: Request
+        """
         body = {
             'body': request.json,
             'headers': dict(request.headers),
@@ -86,6 +94,10 @@ class Redirect(hammock.Resource):
         trim_prefix='redirect',
     )
     def post_generator(self, some_data):
+        """
+        Post generator.
+        :param str some_data: Some data
+        """
         self.before(some_data)
         resp = yield
         self.after(resp)

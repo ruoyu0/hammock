@@ -20,10 +20,10 @@ class Dict(hammock.Resource):
     @hammock.post("{key}", success_code=201)
     def insert(self, key, value):  # pylint: disable=unused-argument
         """
-        Create a new key-value pair
-        :param key: key to insert
-        :param value: a value to the key
-        :return dict: the created key-value
+        Create a new key-value pair.
+        :param str key: Key to insert
+        :param value: A value to the key
+        :return dict: The created key-value
         """
         if key in self._dict:
             raise exceptions.BadRequest('Key already exists')
@@ -33,9 +33,10 @@ class Dict(hammock.Resource):
     @hammock.get("{key}")
     def get(self, key, default=None):  # pylint: disable=unused-argument
         """
-        Get a value from the dict
-        :param key: which key to get
-        :return dict: the key: value
+        Get a value from the dict.
+        :param str key: Which key to get
+        :param str default: Default
+        :return dict: The key: value
         """
         if default is None and key not in self._dict:
             raise KeyNotFound()
@@ -44,18 +45,17 @@ class Dict(hammock.Resource):
     @hammock.get()
     def list(self):
         """
-        Show all the dict
-        :return list: the content of the dict
+        Show all the dict.
+        :return list: The content of the dict
         """
         return [{'key': key, 'value': value} for key, value in six.iteritems(self._dict)]
 
     @hammock.put("{key}")
     def update(self, key, value):  # pylint: disable=unused-argument
         """
-        Update an existing key
-        :param key: a key to update
-        :param value: new value for the key
-        :return dict: the old key: value
+        Update an existing key.
+        :param str key: A key to update
+        :return dict: The old key: value
         """
         if key not in self._dict:
             raise KeyNotFound()
@@ -66,9 +66,9 @@ class Dict(hammock.Resource):
     @hammock.delete("{key}")
     def remove(self, key):  # pylint: disable=unused-argument
         """
-        Deletes a key from the dict
-        :param key: which key to delete
-        :return dict: the old key: value
+        Deletes a key from the dict.
+        :param str key: Which key to delete
+        :return dict: The old key: value
         """
         if key not in self._dict:
             raise KeyNotFound()

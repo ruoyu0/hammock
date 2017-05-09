@@ -8,6 +8,11 @@ class Lists(hammock.Resource):
 
     @hammock.get('{path}')
     def get(self, path, argument):
+        """
+        Get.
+        :param str path: Path
+        :return dict: Values
+        """
         return {
             'path': int(path),
             'argument': [int(ai) for ai in argument],
@@ -16,10 +21,10 @@ class Lists(hammock.Resource):
     @hammock.post('{path}')
     def append(self, path, _list):
         """
-        Append to a list
-        :param int path: append to list
-        :param list _list: list to append to
-        :return list: the list with extra value
+        Append to a list.
+        :param int path: Append to list
+        :param list _list: List to append to
+        :return list: The list with extra value
         """
         _list.append(int(path))
         return _list
