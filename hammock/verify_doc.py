@@ -68,7 +68,8 @@ def _func_default_dict(route):
     return dict(zip(arg_names, defaults))
 
 
-def verify_doc(package, method_verifier=None, argument_verifier=None):
+def verify_doc(package, method_verifier=None, argument_verifier=None, verification_exceptions=None):
+    verification_exceptions = verification_exceptions or set()
     errors = []
     with mock_import.mock_import([package]):
         for resource_class, parents in packages.iter_resource_classes(package):
@@ -83,6 +84,8 @@ def verify_doc(package, method_verifier=None, argument_verifier=None):
                     stripped_path = stripped_path.replace('{%s}' % path_var, '')
                 if '_' in stripped_path:
                     errors.append('%s has _ in path %s (use -)' % (path, identifier))
+                if (resource_class.__name__, route.func.__name__) in verification_exceptions:
+                    continue
                 method = Method(name=route.func.__name__,
                                 doc=strip_escaped_newlines(route.spec.doc),
                                 class_name=resource_class.__name__,
@@ -94,17 +97,20 @@ def verify_doc(package, method_verifier=None, argument_verifier=None):
 
                 default_dict = _func_default_dict(route)
                 for name, arg in six.iteritems(route.spec.args_info):
-                    if not name.startswith('_'):
-                        identifier = '%s::%s' % (resource_class.__name__, route.func.__name__)
-                        default = default_dict.get(name, NO_DEFAULT)
-                        argument = Argument(name=route.keyword_map.get(name, name),
-                                            class_name=resource_class.__name__,
-                                            doc=strip_escaped_newlines(arg.doc),
-                                            method_name=route.func.__name__,
-                                            type_name=arg.type_name,
-                                            default=default,
-                                            has_default=default is not NO_DEFAULT)
-                        errors.extend(_verify_argument(identifier, argument, argument_verifier))
+                    if name.startswith('_'):
+                        continue
+                    if (resource_class.__name__, route.func.__name__, route.keyword_map.get(name, name)) in verification_exceptions:
+                        continue
+                    identifier = '%s::%s' % (resource_class.__name__, route.func.__name__)
+                    default = default_dict.get(name, NO_DEFAULT)
+                    argument = Argument(name=route.keyword_map.get(name, name),
+                                        class_name=resource_class.__name__,
+                                        doc=strip_escaped_newlines(arg.doc),
+                                        method_name=route.func.__name__,
+                                        type_name=arg.type_name,
+                                        default=default,
+                                        has_default=default is not NO_DEFAULT)
+                    errors.extend(_verify_argument(identifier, argument, argument_verifier))
 
     return errors
 

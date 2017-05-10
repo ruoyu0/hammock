@@ -25,9 +25,13 @@ IGNORE_KW = {common.KW_HEADERS, common.KW_FILE, common.KW_LIST, common.KW_CREDEN
 
 class ClientGenerator(object):
     def __init__(self, class_name, resources_package, default_url='',
-                 lenient=False, method_verifier=False, argument_verifier=False):
+                 lenient=False, method_verifier=False, argument_verifier=False,
+                 verification_exceptions=None):
         if not lenient:
-            errors = verify_doc.verify_doc(resources_package, method_verifier, argument_verifier)
+            errors = verify_doc.verify_doc(resources_package,
+                                           method_verifier,
+                                           argument_verifier,
+                                           verification_exceptions)
             for err in errors:
                 sys.stderr.write(err + '\n')
             if errors:
@@ -202,8 +206,8 @@ def client_methods_properties(resource_object, paths):
     return methods
 
 
-def main(class_name, package_name, default_url='', lenient=False, method_verifier=False, argument_verifier=False):
-    print(ClientGenerator(class_name, package_name, default_url, lenient, method_verifier, argument_verifier).code)
+def main(class_name, package_name, default_url='', lenient=False, method_verifier=False, argument_verifier=False, verification_exceptions=None):
+    print(ClientGenerator(class_name, package_name, default_url, lenient, method_verifier, argument_verifier, verification_exceptions).code)
 
 
 if __name__ == '__main__':
