@@ -16,7 +16,6 @@ import hammock.mock_import as mock_import
 from hammock.names import PATH_VARIABLE
 from hammock.swaggerize import strip_escaped_newlines
 
-
 NO_DEFAULT = object()
 
 Method = namedtuple('Method', ('name', 'doc', 'class_name', 'method', 'returns', 'returns_doc', 'success_code'))
@@ -30,10 +29,10 @@ def _verify_argument(identifier, arg, argument_verifier):
     if not arg.type_name:
         errors.append('has no type')
 
-    bool_dict = {'bool': NO_DEFAULT,
-                 'bool[True]': True,
-                 'bool[False]': False}
-    if arg.type_name in bool_dict and bool_dict[arg.type_name] != arg.default:
+    bool_dict = {'bool': (NO_DEFAULT, None),
+                 'bool[True]': (True, ),
+                 'bool[False]': (False, )}
+    if arg.type_name in bool_dict and arg.default not in bool_dict[arg.type_name]:
         errors.append('default does not match documentation')
     if arg.doc and arg.doc[0] != arg.doc[0].upper():
         errors.append('documentation is not capitalized')
@@ -50,8 +49,8 @@ def _verify_method(identifier, method, method_verifier):
         errors.append('has no return value')
     if method.doc and method.doc[0] != method.doc[0].upper():
         errors.append('documentation is not capitalized')
-    if not method.doc.endswith('.'):
-        errors.append('documentation should end with a .')
+    if not method.doc.endswith(('.', '!', '?')):
+        errors.append('documentation should end with a punctuation mark')
     if method.returns and not method.returns_doc:
         errors.append('no documentation for return value')
     if method.returns_doc.endswith('.'):
@@ -75,14 +74,15 @@ def verify_doc(package, method_verifier=None, argument_verifier=None):
         for resource_class, parents in packages.iter_resource_classes(package):
             resource_path = common.url_join(*([parent.path for parent in parents] + [resource_class.path()]))
             for route in resource_class.iter_route_methods():
+                if route.dest is not None:
+                    continue
                 path = '/' + common.url_join(resource_path, route.path)
                 identifier = '%s::%s' % (resource_class.__name__, route.func.__name__)
                 stripped_path = path[:]
                 for path_var in PATH_VARIABLE.findall(path):
                     stripped_path = stripped_path.replace('{%s}' % path_var, '')
                 if '_' in stripped_path:
-                    errors.append('%s has _ in path (use -)' % identifier)
-
+                    errors.append('%s has _ in path %s (use -)' % (path, identifier))
                 method = Method(name=route.func.__name__,
                                 doc=strip_escaped_newlines(route.spec.doc),
                                 class_name=resource_class.__name__,
