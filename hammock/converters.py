@@ -51,6 +51,13 @@ def to_str(value):
     return str(value) if value is not None else None
 
 
+def to_unicode(value):
+    if isinstance(value, six.text_type):
+        return value
+    else:
+        return six.text_type(value, 'utf8') if value is not None else None
+
+
 def to_uuid(value):
     return str(uuid.UUID(value)) if value is not None else None
 
