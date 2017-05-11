@@ -10,10 +10,8 @@ import inspect
 import argparse
 from collections import namedtuple
 
-import hammock.common as common
 import hammock.packages as packages
 import hammock.mock_import as mock_import
-from hammock.names import PATH_VARIABLE
 from hammock.swaggerize import strip_escaped_newlines
 
 NO_DEFAULT = object()
@@ -72,18 +70,11 @@ def verify_doc(package, method_verifier=None, argument_verifier=None, verificati
     verification_exceptions = verification_exceptions or set()
     errors = []
     with mock_import.mock_import([package]):
-        for resource_class, parents in packages.iter_resource_classes(package):
-            resource_path = common.url_join(*([parent.path for parent in parents] + [resource_class.path()]))
+        for resource_class, _ in packages.iter_resource_classes(package):
             for route in resource_class.iter_route_methods():
                 if route.dest is not None:
                     continue
-                path = '/' + common.url_join(resource_path, route.path)
                 identifier = '%s::%s' % (resource_class.__name__, route.func.__name__)
-                stripped_path = path[:]
-                for path_var in PATH_VARIABLE.findall(path):
-                    stripped_path = stripped_path.replace('{%s}' % path_var, '')
-                if '_' in stripped_path:
-                    errors.append('%s has _ in path %s (use -)' % (path, identifier))
                 if (resource_class.__name__, route.func.__name__) in verification_exceptions:
                     continue
                 method = Method(name=route.func.__name__,
