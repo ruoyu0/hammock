@@ -67,6 +67,26 @@ def _func_default_dict(route):
 
 
 def verify_doc(package, method_verifier=None, argument_verifier=None, verification_exceptions=None):
+    """Verify API documentation.
+
+    :param method_verifier: a function that gets a single Method
+    object (see above) and returns a list of errors as strings (if
+    found).  these strings are prefixed by the method identifier and
+    added to any other errors that are found here.
+
+    :param argument_verifier: a function that gets a single Argument
+    object (see above) and returns a list of errors as strings (if
+    found).  these strings are prefixed by the argument identifier and
+    added to any other errors that are found here.
+
+    :verification_exceptions: a list of tuples for methods and
+    arguments to ignore. tuples of length 2 refer to methods:
+    (ClassName, method_name) and tuples of length 3 refer to
+    parameters to methods: ((ClassName, method_name, parameter name).
+    if the method or parameter is found in verification_exceptions
+    they are not verified.
+
+    """
     verification_exceptions = verification_exceptions or set()
     errors = []
     with mock_import.mock_import([package]):
@@ -74,7 +94,7 @@ def verify_doc(package, method_verifier=None, argument_verifier=None, verificati
             for route in resource_class.iter_route_methods():
                 if route.dest is not None:
                     continue
-                identifier = '%s::%s' % (resource_class.__name__, route.func.__name__)
+                identifier = '%s.%s' % (resource_class.__name__, route.func.__name__)
                 if (resource_class.__name__, route.func.__name__) in verification_exceptions:
                     continue
                 method = Method(name=route.func.__name__,
@@ -92,7 +112,6 @@ def verify_doc(package, method_verifier=None, argument_verifier=None, verificati
                         continue
                     if (resource_class.__name__, route.func.__name__, route.keyword_map.get(name, name)) in verification_exceptions:
                         continue
-                    identifier = '%s::%s' % (resource_class.__name__, route.func.__name__)
                     default = default_dict.get(name, NO_DEFAULT)
                     argument = Argument(name=route.keyword_map.get(name, name),
                                         class_name=resource_class.__name__,

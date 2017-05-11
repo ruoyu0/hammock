@@ -24,6 +24,12 @@ IGNORE_KW = {common.KW_HEADERS, common.KW_FILE, common.KW_LIST, common.KW_CREDEN
 
 
 class ClientGenerator(object):
+    """Generates REST Clients.
+
+    method_verifier, argument_verifier and verification_exceptions are
+    used only by verify_doc and are documented there.
+
+    """
     def __init__(self, class_name, resources_package, default_url='',
                  lenient=False, method_verifier=False, argument_verifier=False,
                  verification_exceptions=None):
