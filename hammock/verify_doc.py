@@ -19,6 +19,9 @@ NO_DEFAULT = object()
 Method = namedtuple('Method', ('name', 'doc', 'class_name', 'method', 'returns', 'returns_doc', 'success_code'))
 Argument = namedtuple('Argument', ('name', 'doc', 'class_name', 'method_name', 'type_name', 'default', 'has_default'))
 
+ExceptedMethod = namedtuple('ExceptedMethod', ('class_name', 'method_name'))
+ExceptedArgument = namedtuple('ExceptedMethod', ('class_name', 'method_name', 'parameter_name'))
+
 
 def _verify_argument(identifier, arg, argument_verifier):
     errors = argument_verifier(arg) if argument_verifier else []
@@ -79,13 +82,9 @@ def verify_doc(package, method_verifier=None, argument_verifier=None, verificati
     found).  these strings are prefixed by the argument identifier and
     added to any other errors that are found here.
 
-    :verification_exceptions: a list of tuples for methods and
-    arguments to ignore. tuples of length 2 refer to methods:
-    (ClassName, method_name) and tuples of length 3 refer to
-    parameters to methods: ((ClassName, method_name, parameter name).
-    if the method or parameter is found in verification_exceptions
-    they are not verified.
-
+    :param list verification_exceptions: a list of ExceptedMethods and
+    ExceptedArguments to ignore by verify_doc (similar to #noqa for
+    pep8)
     """
     verification_exceptions = verification_exceptions or set()
     errors = []
@@ -95,7 +94,7 @@ def verify_doc(package, method_verifier=None, argument_verifier=None, verificati
                 if route.dest is not None:
                     continue
                 identifier = '%s.%s' % (resource_class.__name__, route.func.__name__)
-                if (resource_class.__name__, route.func.__name__) in verification_exceptions:
+                if ExceptedMethod(resource_class.__name__, route.func.__name__) in verification_exceptions:
                     continue
                 method = Method(name=route.func.__name__,
                                 doc=strip_escaped_newlines(route.spec.doc),
@@ -110,7 +109,7 @@ def verify_doc(package, method_verifier=None, argument_verifier=None, verificati
                 for name, arg in six.iteritems(route.spec.args_info):
                     if name.startswith('_'):
                         continue
-                    if (resource_class.__name__, route.func.__name__, route.keyword_map.get(name, name)) in verification_exceptions:
+                    if ExceptedArgument(resource_class.__name__, route.func.__name__, route.keyword_map.get(name, name)) in verification_exceptions:
                         continue
                     default = default_dict.get(name, NO_DEFAULT)
                     argument = Argument(name=route.keyword_map.get(name, name),
