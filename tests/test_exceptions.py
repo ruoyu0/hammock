@@ -2,7 +2,7 @@ from __future__ import absolute_import
 import hammock.exceptions as exceptions
 import tests.base as base
 import tests.resources1.exceptions as exceptions_resource
-import ujson as json
+import hammock.common as common
 import logging
 
 
@@ -20,7 +20,7 @@ class TestExceptions(base.TestBase):
         self.assertEqual(bad_request.title, bad_request_dict['title'])
         self.assertEqual(bad_request.description, bad_request_dict['description'])
         self.assertDictEqual(bad_request.to_dict, bad_request_dict)
-        self.assertDictEqual(json.loads(bad_request.to_json), bad_request_dict)
+        self.assertDictEqual(common.json_loads(bad_request.to_json), bad_request_dict)
 
     def test_internal_server_error(self):
         logging.info("Testing for exception raising")

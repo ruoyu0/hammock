@@ -1,8 +1,4 @@
 from __future__ import absolute_import
-try:
-    import ujson as json
-except ImportError:
-    import json
 
 BAD_REQUEST = 400
 UNAUTHORIZED = 401
@@ -29,7 +25,8 @@ class HttpError(Exception):
 
     @property
     def to_json(self):
-        return json.dumps(self.to_dict)
+        import hammock.common as common  # import here to resolve circular reference
+        return common.json_dumps(self.to_dict)
 
     @property
     def to_dict(self):

@@ -2,10 +2,6 @@ from __future__ import absolute_import
 import collections
 import falcon
 import falcon.testing as testing
-try:
-    import ujson as json
-except ImportError:
-    import json
 import six
 import importlib
 import hammock
@@ -36,7 +32,7 @@ class TestBase(testing.TestBase):
             kwargs["query_string"] = query_string
         if body is not None:
             content_type = headers.get(common.CONTENT_TYPE, common.TYPE_JSON)
-            kwargs["body"] = json.dumps(body) if common.TYPE_JSON in content_type else body
+            kwargs["body"] = common.json_dumps(body) if common.TYPE_JSON in content_type else body
             headers.update({common.CONTENT_TYPE: content_type})
         kwargs["headers"] = headers
         response = self.simulate_request(url, method=method, **kwargs)
@@ -48,7 +44,7 @@ class TestBase(testing.TestBase):
             result = result.decode(common.ENCODING)
         headers = types.Headers(dict(self.srmock.headers))
         if not binary_response and common.TYPE_JSON in headers.get(common.CONTENT_TYPE, ''):
-            result = json.loads(result)
+            result = common.json_loads(result)
         return result
 
     def assert_status(self, status, *args, **kwargs):

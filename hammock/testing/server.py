@@ -2,10 +2,6 @@ from __future__ import absolute_import
 import six
 import threading
 import logging
-try:
-    import ujson as json
-except ImportError:
-    import json
 import socket
 import hammock.common as common
 
@@ -84,7 +80,7 @@ class Handler(six.moves.SimpleHTTPServer.SimpleHTTPRequestHandler):
         if body and not isinstance(body, six.string_types):
             body = body.decode()
         if common.TYPE_JSON in self.headers.get(common.CONTENT_TYPE, ''):
-            body = json.loads(body)
+            body = common.json_loads(body)
         parsed = six.moves.urllib.parse.urlsplit(self.path)
         content = dict(
             method=method,
@@ -99,7 +95,7 @@ class Handler(six.moves.SimpleHTTPServer.SimpleHTTPRequestHandler):
         if not self.headers.get(common.CONTENT_TYPE) or common.TYPE_JSON in self.headers[common.CONTENT_TYPE]:
             if isinstance(content, six.binary_type):
                 content = content.decode()  # pylint: disable=no-member
-            content = six.b(json.dumps(content))
+            content = six.b(common.json_dumps(content))
             self.send_header(common.CONTENT_LENGTH, len(content))
             self.send_header(common.CONTENT_TYPE, common.TYPE_JSON)
             self.end_headers()

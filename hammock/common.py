@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+from json import loads as json_loads_fallback
+from json import dumps as json_dumps_fallback
 try:
     import ujson as json
 except ImportError:
@@ -44,7 +46,29 @@ HEAD = 'HEAD'
 DELETE = 'DELETE'
 PATCH = 'PATCH'
 
-CONTENT_CONVERSION = {TYPE_JSON: json.dumps, TYPE_XML: ElementTree.tostring}
+
+def json_loads(body):
+    """Primary json parser (ujson) is known to have problems
+    converting large numbers that cause ValueError on loads operations.
+    Fallback to the standard json parser which does not have this issue.
+    """
+    try:
+        return json.loads(body)
+    except ValueError:
+        return json_loads_fallback(body)
+
+
+def json_dumps(data):
+    """Primary json parser (ujson) is known to have problems
+    converting large numbers that cause OverflowError on dumps operations.
+    Fallback to the standard json parser which does not have this issue.
+    """
+    try:
+        return json.dumps(data)
+    except OverflowError:
+        return json_dumps_fallback(data)
+
+CONTENT_CONVERSION = {TYPE_JSON: json_dumps, TYPE_XML: ElementTree.tostring}
 
 
 def url_join(*parts):
@@ -106,4 +130,4 @@ def repr_request_kwargs_for_logging(kwargs):
     # token is too large to be printed
     if KW_CREDENTIALS in kw:
         kw[KW_CREDENTIALS].token = 'omitted'
-    return json.dumps(kw)
+    return json_dumps(kw)

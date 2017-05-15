@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 import six
-import ujson as json
 import hammock
 import hammock.common as common
 
@@ -29,7 +28,7 @@ class Patterns(hammock.Resource):
     @hammock.sink("{my_id}/extra")
     def get_id_metadata(self, request, my_id):  # pylint: disable=unused-argument
         return hammock.types.Response(
-            content=six.BytesIO(six.b(json.dumps('extra-%s') % my_id)),
+            content=six.BytesIO(six.b(common.json_dumps('extra-%s') % my_id)),
             status=200,
             headers={common.CONTENT_TYPE: common.TYPE_JSON},
         )
@@ -37,7 +36,7 @@ class Patterns(hammock.Resource):
     @hammock.sink("{my_id}/extra/specific")
     def get_id_metadata_specific(self, request, my_id):  # pylint: disable=unused-argument
         return hammock.types.Response(
-            content=six.BytesIO(six.b(json.dumps('extra-specific-%s') % my_id)),
+            content=six.BytesIO(six.b(common.json_dumps('extra-specific-%s') % my_id)),
             status=200,
             headers={common.CONTENT_TYPE: common.TYPE_JSON},
         )
