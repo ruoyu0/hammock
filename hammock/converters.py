@@ -1,10 +1,7 @@
 from __future__ import absolute_import
 import six
 import uuid
-try:
-    import ujson as json
-except ImportError:
-    import json
+import hammock.common as common
 
 
 def to_bool(value):
@@ -33,7 +30,7 @@ def to_dict(value):
         return {}
     dict_value = value
     if isinstance(value, six.string_types):
-        dict_value = json.loads(value)
+        dict_value = common.json_loads(value)
     if not isinstance(dict_value, dict):
         raise ValueError('Conversion to dict failed')
     return dict_value

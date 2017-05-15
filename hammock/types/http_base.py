@@ -1,9 +1,5 @@
 from __future__ import absolute_import
 import io
-try:
-    import ujson as json
-except ImportError:
-    import json
 
 import hammock.common as common
 import hammock.exceptions as exceptions
@@ -50,7 +46,7 @@ class HttpBase(object):
             body = self.read()
             if body:
                 try:
-                    self._json = json.loads(body)
+                    self._json = common.json_loads(body)
                 except (ValueError, UnicodeDecodeError) as exc:
                     raise exceptions.MalformedJson(
                         "Could not parse json body {!r}: {!r}".format(body, exc))
@@ -62,7 +58,7 @@ class HttpBase(object):
         if data is None:
             self.content = None
         else:
-            self.content = json.dumps(data)
+            self.content = common.json_dumps(data)
             self.headers[common.CONTENT_TYPE] = common.TYPE_JSON
 
     @property
