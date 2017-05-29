@@ -26,12 +26,10 @@ def to_list(value):
 
 
 def to_dict(value):
-    if value is None:
-        return {}
     dict_value = value
     if isinstance(value, six.string_types):
         dict_value = common.json_loads(value)
-    if not isinstance(dict_value, dict):
+    if not isinstance(dict_value, dict) and dict_value is not None:
         raise ValueError('Conversion to dict failed')
     return dict_value
 
