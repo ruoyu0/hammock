@@ -42,8 +42,13 @@ class Falcon(backend.Backend):
 
     @staticmethod
     def _req_from_backend(backend_req, url_params):
+        if (backend_req.content_type is not None and
+                'application/x-www-form-urlencoded' in backend_req.content_type):
+            content = "&".join([k + "=" + backend_req.params[k] for k in backend_req.params])
+        else:
+            content = backend_req.stream
         return request.Request(
-            backend_req.method, backend_req.url, backend_req.headers, backend_req.stream, url_params)
+            backend_req.method, backend_req.url, backend_req.headers, content, url_params)
 
     @staticmethod
     def _update_backend_response(resp, backend_resp):
