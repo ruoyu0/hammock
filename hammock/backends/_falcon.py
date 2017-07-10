@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import six
 import re
 import logging
+import urllib
 import hammock.common as common
 import hammock.names as names
 import hammock.types.request as request
@@ -42,9 +43,8 @@ class Falcon(backend.Backend):
 
     @staticmethod
     def _req_from_backend(backend_req, url_params):
-        if (backend_req.content_type is not None and
-                'application/x-www-form-urlencoded' in backend_req.content_type):
-            content = "&".join([k + "=" + backend_req.params[k] for k in backend_req.params])
+        if common.TYPE_URL_ENCODED in backend_req.content_type or '':
+            content = urllib.urlencode(backend_req.params)
         else:
             content = backend_req.stream
         return request.Request(
