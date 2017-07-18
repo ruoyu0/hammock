@@ -59,7 +59,7 @@ class PositionalArg(object):
 
     @property
     def _parser_name(self):
-        return self.name
+        return names.to_variable_name(self.name)
 
     def _parser_update_kwargs(self, kwargs):
         self._update_list_kwargs(kwargs)

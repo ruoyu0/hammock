@@ -18,11 +18,14 @@ def _to_parts(name):
 
 def to_variable_name(name):
     starts_with_underscore = name.startswith('_')
+    ends_with_underscore = name.endswith('_')
     name = REMOVE_VARIABLES(name)
     name = REMOVE_NAME_INVALID_CHARS(name)
     name = '_'.join(_to_parts(name)).replace('-', '_')
     if starts_with_underscore:
         name = '_' + name
+    if ends_with_underscore:
+        name += '_'
     return name
 
 
