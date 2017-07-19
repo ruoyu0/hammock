@@ -21,7 +21,12 @@ def version():
 
 def read(fname):
     path = os.path.join(os.path.dirname(__file__), fname)
-    return open(path).read() if os.path.exists(path) else ''
+    if os.path.exists(path):
+        with open(path, 'rb') as f:
+            data = f.read()
+        return data.decode()
+    else:
+        return ''
 
 
 setuptools.setup(
