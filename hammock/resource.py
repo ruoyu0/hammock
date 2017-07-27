@@ -62,11 +62,13 @@ class Resource(object):
                 exc = self._default_exception_handler(exc)
             common.log_exception(exc, request_uuid)
         except Exception as handle_exception:  # pylint: disable=broad-except
+            logging.exception("Exception handler failed - translating to InternalServerError")
             exc = exceptions.InternalServerError(
                 'Error handling exception {:r}: {}'.format(exc, str(handle_exception)))
         finally:
             # If exception was not converted yet, we convert it to internal server error.
             if not isinstance(exc, exceptions.HttpError):
+                logging.error("Exception is not http-exception. Translating to InternalServerError")
                 exc = exceptions.InternalServerError(repr(exc))
 
             common.log_request(request_method, request_uri,
