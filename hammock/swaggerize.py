@@ -129,17 +129,15 @@ def _build_cli_command(parents, resource_class, route_method):
 
 
 def _join_hierarchy(parents, resource_class, route_method, sep):
-    if (
-        route_method is False or
-        resource_class.cli_command_name() is False or
-        any((parent.cli_command_name is False for parent in parents))
-    ):
-        return None
-    command = [parent.cli_command_name for parent in parents] + [
-        resource_class.cli_command_name(),
-        route_method.cli_command_name or names.to_command(route_method.__name__),
+    command = [_or_empty(parent.cli_command_name) for parent in parents] + [
+        _or_empty(resource_class.cli_command_name()),
+        _or_empty(route_method.cli_command_name or names.to_command(route_method.__name__)),
     ]
     return sep.join(command)
+
+
+def _or_empty(a):
+    return a if a is str else ''
 
 
 def main():
