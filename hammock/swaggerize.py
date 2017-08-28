@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 import six
 import argparse
-import json
+import yaml
 import sys
 import re
 
@@ -12,7 +12,6 @@ import hammock.types.args as _args
 import hammock.names as names
 import hammock.mock_import as mock_import
 
-from collections import defaultdict
 from collections import OrderedDict
 from hammock.names import PATH_VARIABLE
 
@@ -46,7 +45,7 @@ def generate_swagger(package):
             'version': '1.0.0',
         }
     )
-    paths = defaultdict(dict)
+    paths = dict()
     definitions = {}
     with mock_import.mock_import([package]):
         for resource_class, parents in packages.iter_resource_classes(package):
@@ -57,31 +56,31 @@ def generate_swagger(package):
                 method = route.method.lower()
 
                 # classify params by source: path, query or body
-                params = defaultdict(dict)
+                params = dict()
                 for name, arg in six.iteritems(route.spec.args_info):
                     if name.startswith('_'):
                         continue
                     if name in path_vars:
-                        params['path'][name] = arg
+                        params.setdefault('path', dict())[name] = arg
                     elif method in ['get']:
-                        params['query'][name] = arg
+                        params.setdefault('query', dict())[name] = arg
                     elif method in ['post', 'put', 'patch']:
-                        params['body'][name] = arg
+                        params.setdefault('body', dict())[name] = arg
 
                 parameters = []
                 # add all path params
-                for name, arg in six.iteritems(params['path']):
+                for name, arg in six.iteritems(params.get('path', {})):
                     parameters.append(_generate_param_dict(route, name, arg, 'path', True))
 
                 # add all query params
-                for name, arg in six.iteritems(params['query']):
+                for name, arg in six.iteritems(params.get('query', {})):
                     required = not isinstance(arg, (_args.KeywordArg, _args.OptionalArg))
                     parameters.append(_generate_param_dict(route, name, arg, 'query', required))
 
                 # add body param if needed
                 properties = {}
                 required = []
-                for name, arg in six.iteritems(params['body']):
+                for name, arg in six.iteritems(params.get('body', {})):
                     prop_name = route.keyword_map.get(name, name)
                     properties[prop_name] = {
                         'type': SWAGGER_TYPES.get(arg.type_name, "string"),
@@ -114,7 +113,7 @@ def generate_swagger(package):
                         }
                     }
                 }
-                paths[path][method] = operation
+                paths.setdefault(path, dict())[method] = operation
     doc['paths'] = paths
     doc['definitions'] = definitions
     return doc
@@ -142,13 +141,26 @@ def _join_hierarchy(parents, resource_class, route_method, sep):
     return sep.join(command)
 
 
+def represent_ordereddict(dumper, data):
+    value = []
+
+    for item_key, item_value in data.items():
+        node_key = dumper.represent_data(item_key)
+        node_value = dumper.represent_data(item_value)
+
+        value.append((node_key, node_value))
+
+    return yaml.nodes.MappingNode(u'tag:yaml.org,2002:map', value)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('package')
     args = parser.parse_args()
     parser.add_mutually_exclusive_group()
     doc = generate_swagger(args.package)
-    json.dump(doc, fp=sys.stdout, indent=2)
+    yaml.add_representer(OrderedDict, represent_ordereddict)
+    yaml.dump(doc, sys.stdout, default_flow_style=False)
 
 
 if __name__ == '__main__':
