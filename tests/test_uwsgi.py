@@ -52,7 +52,7 @@ class TestUwsgi(uwsgi_base.UwsgiBase):
             {
                 'status': 500,
                 'title': 'Internal Server Error',
-                'description': repr(Exception(exceptions_resouce.DESCRIPTION)),
+                'description': '',
             },
             exc.exception.response.json()
         )

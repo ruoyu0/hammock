@@ -4,6 +4,7 @@ import functools
 import logging
 import sys
 import six
+import requests.exceptions
 
 import hammock.exceptions as exceptions
 import hammock.common as common
@@ -60,6 +61,17 @@ class Resource(object):
                 exc = exception_handler(exc)
             elif self._default_exception_handler:
                 exc = self._default_exception_handler(exc)
+            elif isinstance(exc, requests.exceptions.HTTPError) and \
+                    request_method.upper() in ['POST', 'PUT', 'PATCH']:
+                reason = common.get_exception_message(exc)
+                status_code = exc.response.status_code
+                original_exc = exc
+                if status_code == exceptions.NOT_FOUND:
+                    exc = exceptions.BadRequest(reason)
+                elif status_code < 500 and status_code not in [exceptions.UNAUTHORIZED, exceptions.FORBIDDEN]:
+                    exc = exceptions.class_factory(status_code, exc.message, reason)
+                if original_exc != exc:
+                    common.log_exception(original_exc, request_uuid)
             common.log_exception(exc, request_uuid)
         except Exception as handle_exception:  # pylint: disable=broad-except
             logging.exception("Exception handler failed - translating to InternalServerError")
@@ -69,7 +81,7 @@ class Resource(object):
             # If exception was not converted yet, we convert it to internal server error.
             if not isinstance(exc, exceptions.HttpError):
                 logging.error("Exception is not http-exception. Translating to InternalServerError")
-                exc = exceptions.InternalServerError(repr(exc))
+                exc = exceptions.InternalServerError()
 
             common.log_request(request_method, request_uri,
                                getattr(exc, 'CODE', getattr(exc, 'status', exceptions.INTERNAL_SERVER_ERROR)),
