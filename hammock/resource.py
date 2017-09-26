@@ -72,7 +72,7 @@ class Resource(object):
                 exc = exceptions.InternalServerError(repr(exc))
 
             common.log_request(request_method, request_uri,
-                               getattr(exc, 'CODE', exceptions.INTERNAL_SERVER_ERROR),
+                               getattr(exc, 'CODE', getattr(exc, 'status', exceptions.INTERNAL_SERVER_ERROR)),
                                request_start)
 
             # Raise exc, with the original traceback
