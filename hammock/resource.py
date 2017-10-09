@@ -32,6 +32,12 @@ class Resource(object):
     #   otherwise, the value will be the command name.
     CLI_COMMAND_NAME = None
 
+    # CLIENT_VAR_NAME:
+    # change the name of the member name of the resource in the python client
+    #   if None, the name will be set to lower-case, with underscores.
+    #   otherwise, the value will be the member name
+    CLIENT_VAR_NAME = None
+
     def __init__(self, **resource_params):
         self.params = resource_params
         self._specs = {}
@@ -130,7 +136,7 @@ class Resource(object):
 
     @classmethod
     def client_variable_name(cls):
-        return names.to_variable_name(cls.name())
+        return cls.CLIENT_VAR_NAME or names.to_variable_name(cls.name())
 
     @classmethod
     def client_class_name(cls):
