@@ -207,7 +207,7 @@ class Route(wrapper.Wrapper):
         mapped_args = set(self.keyword_map.keys())
         invalid_arguments = mapped_args - func_args
 
-        if invalid_arguments:
+        if invalid_arguments and not self.spec.keywords:
             raise self._error(
                 exceptions.BadResourceDefinition,
                 'Mapped arguments {} are not in method arguments'.format(', '.join(invalid_arguments)))
