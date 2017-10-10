@@ -159,6 +159,14 @@ class Route(wrapper.Wrapper):
             for keyword, default in six.iteritems(self.spec.kwargs)
         })
 
+        # Handle kwargs that appear in the resource as **kwargs
+        if self.keyword_map:
+            collected_data.update({
+                var_name: collected_data.pop(arg_name)
+                for var_name, arg_name in six.iteritems(self.keyword_map)
+                if arg_name in collected_data
+            })
+
     @staticmethod
     def get_status_code(status):
         """
