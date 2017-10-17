@@ -54,7 +54,10 @@ def to_unicode(value):
 
 
 def to_uuid(value):
-    return str(uuid.UUID(value)) if value is not None else None
+    if value is not None:
+        # Check that uuid is valid
+        uuid.UUID(value)
+    return value
 
 
 def to_none(_):
