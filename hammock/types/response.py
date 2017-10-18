@@ -47,6 +47,10 @@ class Response(http_base.HttpBase):
                 content = common.CONTENT_CONVERSION[content_type](content)
             else:
                 content = result
+
+            if status == httplib.NO_CONTENT:
+                response_headers.pop(common.CONTENT_TYPE, None)
+                content = None
         else:
             response_headers[common.CONTENT_TYPE] = content_type
             content = result.get(common.KW_CONTENT, None)
