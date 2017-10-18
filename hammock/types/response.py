@@ -43,9 +43,8 @@ class Response(http_base.HttpBase):
             if common.KW_CONTENT in result:
                 content = result.pop(common.KW_CONTENT)
                 response_headers.update(result)
-                if content is not None:
-                    response_headers[common.CONTENT_TYPE] = content_type
-                    content = common.CONTENT_CONVERSION[content_type](content)
+                response_headers[common.CONTENT_TYPE] = content_type
+                content = common.CONTENT_CONVERSION[content_type](content)
             else:
                 content = result
         else:
