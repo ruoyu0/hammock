@@ -69,14 +69,7 @@ def json_dumps(data):
     except OverflowError:
         return json_dumps_fallback(data)
 
-
-def xml_dumps(data):
-    if data is None:
-        return None
-    return ElementTree.tostring(data)
-
-
-CONTENT_CONVERSION = {TYPE_JSON: json_dumps, TYPE_XML: xml_dumps}
+CONTENT_CONVERSION = {TYPE_JSON: json_dumps, TYPE_XML: ElementTree.tostring}
 
 
 def url_join(*parts):
