@@ -88,8 +88,9 @@ def generate_swagger(package):
                     }
                     if not isinstance(arg, (_args.KeywordArg, _args.OptionalArg)):
                         required.append(prop_name)
-
                 operation_id = _build_operation_id(parents, resource_class, route)
+                if not operation_id:
+                    continue
                 if len(properties) > 0:
                     param_name = operation_id + '_object'
                     param = {
@@ -103,7 +104,6 @@ def generate_swagger(package):
                     definitions[param_name] = dict(type='object', properties=properties)
                     if len(required) > 1:
                         definitions[param_name]['required'] = required
-
                 operation = {
                     'description': strip_escaped_newlines(route.spec.doc),
                     'parameters': parameters,
